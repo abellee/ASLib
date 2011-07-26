@@ -2,9 +2,9 @@ package com.iabel.data.Collections
 {
 	import com.iabel.Iterator.ArrayIterator;
 	import com.iabel.Iterator.IIterator;
-	import com.iabel.core.ALObject;
+	import com.iabel.core.AbstractObject;
 	
-	public class Collection extends ALObject implements ICollection
+	public class Collection extends AbstractObject implements ICollection
 	{
 		/**
 		 * 集合的数据;

@@ -1,8 +1,8 @@
 package com.iabel.Iterator
 {
-	import com.iabel.core.ALObject;
+	import com.iabel.core.AbstractObject;
 	
-	public class Iterator extends ALObject implements IIterator
+	public class Iterator extends AbstractObject implements IIterator
 	{
 		/**
 		 * 迭代器的数据
