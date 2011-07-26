@@ -1,5 +1,6 @@
 package com.iabel.core
 {
+
 	public class AbstractObject extends Object
 	{
 		/**
@@ -15,12 +16,9 @@ package com.iabel.core
 			}
 		}
 		
-		/**
-		 * 垃圾回收，调用各子类中的gc(), 请不要直接调用该方法;
-		 */
-		protected function dealloc():void
+		public function dealloc():void
 		{
-			
+			return;
 		}
 	}
 }

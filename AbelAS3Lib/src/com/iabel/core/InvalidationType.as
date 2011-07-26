@@ -7,5 +7,6 @@ package com.iabel.core
 		public static const STYLE:String = "style";
 		public static const SCROLL:String = "scroll";
 		public static const SELECTED:String = "selected";
+		public static const STATE:String = "state";
 	}
 }

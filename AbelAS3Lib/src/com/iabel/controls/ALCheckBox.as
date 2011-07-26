@@ -1,5 +1,7 @@
 package com.iabel.controls
 {
+	import com.iabel.core.InvalidationType;
+	
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -12,25 +14,17 @@ package com.iabel.controls
 		public function ALCheckBox(outSkin:DisplayObject, overSkin:DisplayObject, downSkin:DisplayObject, disabledSkin:DisplayObject, selectedSkin:DisplayObject)
 		{
 			super(outSkin, overSkin, downSkin, disabledSkin, selectedSkin);
-			
-			init();
-		}
-		
-		private function init():void
-		{
-			this.width = 150;
-			this.height = 24;
 		}
 		
 		override protected function onMouseDown(event:MouseEvent):void
 		{
 			_selected = !_selected;
-			callLater(resetCurrentState);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 		
-		override protected function resetCurrentState():void
+		override protected function drawStyle():void
 		{
-			super.resetCurrentState();
+			super.drawStyle();
 			if(!_checkPos) _checkPos = new Point(0, 0);
 			if(_selected){
 				if(_selectedSkin) this.addChild(_selectedSkin);
@@ -42,13 +36,22 @@ package com.iabel.controls
 			}
 		}
 		
+		override protected function resize():void
+		{
+			_alLabel.x = this.getChildAt(0).width;
+			trace(this.height, _alLabel.height, ">>>>>>", _alLabel.width);
+		}
+		
+		override protected function initLabel():void
+		{
+			super.initLabel();
+			_alLabel.width = 0;
+			
+		}
+		
 		override protected function draw():void
 		{
 			super.draw();
-			_alLabel.width = 50;
-			_alLabel.height = 24;
-			_alLabel.x = this.width - _alLabel.width;
-			_alLabel.y = (this.height - _alLabel.height) / 2;
 		}
 		
 		override protected function dealloc(event:Event):void
@@ -69,8 +72,9 @@ package com.iabel.controls
 
 		public function set checkPos(value:Point):void
 		{
+			if(_checkPos == value) return;
 			_checkPos = value;
-			callLater(resetCurrentState);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 
 	}

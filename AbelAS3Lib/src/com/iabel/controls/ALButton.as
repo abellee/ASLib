@@ -1,6 +1,9 @@
 package com.iabel.controls
 {
+	import com.iabel.core.InvalidationType;
 	import com.iabel.core.UIComponent;
+	import com.iabel.event.ALEvent;
+	import com.iabel.utils.ScaleBitmap;
 	
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
@@ -16,7 +19,7 @@ package com.iabel.controls
 		protected var _selectedSkin:DisplayObject;
 		
 		protected var _toggle:Boolean = false;
-		protected var _enable:Boolean = false;
+		protected var _enable:Boolean = true;
 		
 		protected var _alLabel:ALLabel;
 		
@@ -26,13 +29,13 @@ package com.iabel.controls
 		
 		public function ALButton(outSkin:DisplayObject, overSkin:DisplayObject, downSkin:DisplayObject, disabledSkin:DisplayObject, selectedSkin:DisplayObject)
 		{
-			super();
-			
 			this.outSkin = outSkin;
 			this.overSkin = overSkin;
 			this.downSkin = downSkin;
 			this.disabledSkin = disabledSkin;
 			this.selectedSkin = selectedSkin;
+			mouseChildren = false;
+			super();
 		}
 
 		public function get htmlText():String
@@ -42,9 +45,10 @@ package com.iabel.controls
 
 		public function set htmlText(value:String):void
 		{
+			if(_htmlText == value) return;
 			_label = null;
 			_htmlText = value;
-			callLater(draw);
+			invalidation(InvalidationType.SIZE, resize);
 		}
 
 		public function get label():String
@@ -54,9 +58,10 @@ package com.iabel.controls
 
 		public function set label(value:String):void
 		{
+			if(_label == value) return;
 			_htmlText = null;
 			_label = value;
-			callLater(draw);
+			invalidation(InvalidationType.SIZE, resize);
 		}
 
 		public function get currentState():String
@@ -66,8 +71,9 @@ package com.iabel.controls
 
 		public function set currentState(value:String):void
 		{
+			if(_currentState == value) return;
 			_currentState = value;
-			callLater(resetCurrentState);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 
 		public function get toggle():Boolean
@@ -77,13 +83,8 @@ package com.iabel.controls
 
 		public function set toggle(value:Boolean):void
 		{
+			if(_toggle == value) return;
 			_toggle = value;
-			
-			if(!_toggle){
-				draw();
-			}else{
-				_currentState = ALButtonState.SELECTED;
-			}
 		}
 
 		public function get selectedSkin():DisplayObject
@@ -93,8 +94,9 @@ package com.iabel.controls
 
 		public function set selectedSkin(value:DisplayObject):void
 		{
+			if(_selectedSkin == value) return;
 			_selectedSkin = value;
-			callLater(draw);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 
 		public function get disabledSkin():DisplayObject
@@ -104,8 +106,9 @@ package com.iabel.controls
 
 		public function set disabledSkin(value:DisplayObject):void
 		{
+			if(_disabledSkin == value) return;
 			_disabledSkin = value;
-			callLater(draw);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 
 		public function get downSkin():DisplayObject
@@ -115,8 +118,10 @@ package com.iabel.controls
 
 		public function set downSkin(value:DisplayObject):void
 		{
+			if(!value) throw new ArgumentError("downSkin can not be null!");
+			if(_downSkin == value) return;
 			_downSkin = value;
-			callLater(draw);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 
 		public function get overSkin():DisplayObject
@@ -126,8 +131,10 @@ package com.iabel.controls
 
 		public function set overSkin(value:DisplayObject):void
 		{
+			if(!value) throw new ArgumentError("overSkin can not be null!");
+			if(_overSkin == value) return;
 			_overSkin = value;
-			callLater(draw);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 
 		public function get outSkin():DisplayObject
@@ -137,8 +144,10 @@ package com.iabel.controls
 
 		public function set outSkin(value:DisplayObject):void
 		{
+			if(!value) throw new ArgumentError("outSkin can not be null!");
+			if(_outSkin == value) return;
 			_outSkin = value;
-			callLater(draw);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 		
 		public function get enable():Boolean
@@ -148,41 +157,79 @@ package com.iabel.controls
 		
 		public function set enable(value:Boolean):void
 		{
+			if(_enable == value) return;
 			_enable = value;
 			if(!_enable){
 				_currentState = ALButtonState.DISABLED;
 			}else{
-				draw();
+				_currentState = ALButtonState.OUT;
 			}
-			callLater(resetCurrentState);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 		
 		override protected function draw():void
 		{
-			super.draw();
-			drawDefaultSkin();
-			mouseChildren = false;
-			_currentState = ALButtonState.OUT;
-			resetCurrentState();
-			
-			if(!_alLabel) _alLabel = new ALLabel(null);
+			if(isInvalid(InvalidationType.ALL))
+			{
+				drawDefaultSkin();
+				addListener();
+				initLabel();
+				super.draw();
+			}
+			if(isInvalid(InvalidationType.STYLE)){
+				drawDefaultSkin();
+				drawStyle();
+			}
+			if(isInvalid(InvalidationType.SIZE)) resize();
+		}
+		
+		override protected function resize():void
+		{
+			if(_outSkin){
+				_outSkin.width = this.width;
+				_outSkin.height = this.height;
+			}
+			if(_overSkin){
+				_overSkin.width = this.width;
+				_overSkin.height = this.height;
+			}
+			if(_downSkin){
+				_downSkin.width = this.width;
+				_downSkin.height = this.height;
+			}
+			if(_disabledSkin){
+				_disabledSkin.width = this.width;
+				_disabledSkin.height = this.height;
+			}
+			if(_selectedSkin){
+				_selectedSkin.width = this.width;
+				_selectedSkin.height = this.height;
+			}
+		}
+		
+		protected function initLabel():void
+		{
+			if((!_label || _label == "") && (!_htmlText || _htmlText == ""))
+			{
+				if(_alLabel){
+					if(this.contains(_alLabel)){
+						this.removeChild(_alLabel);
+					}
+					_alLabel = null;
+				}
+				return;
+			}
+			if(!_alLabel) _alLabel = new ALLabel("");
 			if(_label) _alLabel.label = _label;
 			if(_htmlText) _alLabel.htmlText = _htmlText;
 			_alLabel.width = this.width;
 			_alLabel.height = this.height;
-			addChild(_alLabel);
+			if(!this.contains(_alLabel)) addChild(_alLabel);
 			_alLabel.x = 0;
 			_alLabel.y = 0;
-			
-			addListener();
 		}
 		
-		override protected function callLater(func:Function):void
-		{
-			super.callLater(func);
-		}
-		
-		private function drawDefaultSkin():void
+		protected function drawDefaultSkin():void
 		{
 			if(_outSkin){
 				if(!this.contains(_outSkin)) addChildAt(_outSkin, 0);
@@ -225,76 +272,77 @@ package com.iabel.controls
 		private function onMouseOver(event:MouseEvent):void
 		{
 			_currentState = ALButtonState.OVER;
-			callLater(resetCurrentState);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 		
 		private function onMouseOut(event:MouseEvent):void
 		{
 			_currentState = ALButtonState.OUT;
-			callLater(resetCurrentState);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 		
 		protected function onMouseDown(event:MouseEvent):void
 		{
 			if(this.toggle) _currentState = ALButtonState.SELECTED;
 			else _currentState = ALButtonState.DOWN;
-			callLater(resetCurrentState);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 		
 		private function onMouseUp(event:MouseEvent):void
 		{
 			_currentState = ALButtonState.UP;
-			callLater(resetCurrentState);
+			invalidation(InvalidationType.STYLE, drawStyle);
 		}
 		
-		protected function resetCurrentState():void
+		override protected function drawStyle():void
 		{
-			drawDefaultSkin();
 			switch(_currentState){
 				
 				case ALButtonState.OVER:
 					if(_overSkin){
-						if(!this.contains(_overSkin)) addChildAt(_overSkin, 0);
+						addChildAt(_overSkin, 0);
 						_overSkin.visible = true;
 					}
 					break;
 				case ALButtonState.OUT:
 					if(_outSkin){
-						if(!this.contains(_outSkin)) addChildAt(_outSkin, 0);
+						addChildAt(_outSkin, 0);
 						_outSkin.visible = true;
 					}
+					addListener();
 					break;
 				case ALButtonState.DOWN:
 					if(_downSkin){
-						if(!this.contains(_downSkin)) addChildAt(_downSkin, 0);
+						addChildAt(_downSkin, 0);
 						_downSkin.visible = true;
 					}
 					break;
 				case ALButtonState.UP:
 					if(_overSkin){
-						if(!this.contains(_overSkin)) addChildAt(_overSkin, 0);
+						addChildAt(_overSkin, 0);
 						_overSkin.visible = true;
 					}
 					break;
 				case ALButtonState.SELECTED:
 					if(_selectedSkin){
-						if(!this.contains(_selectedSkin)) addChildAt(_selectedSkin, 0);
+						addChildAt(_selectedSkin, 0);
 						_selectedSkin.visible = true;
 					}
 					removeListener();
 					break;
 				case ALButtonState.DISABLED:
 					if(_disabledSkin){
-						if(!this.contains(_disabledSkin)) addChildAt(_disabledSkin, 0);
+						addChildAt(_disabledSkin, 0);
 						_disabledSkin.visible = true;
 					}
 					removeListener();
 					break;
 				default:
 					if(_outSkin){
-						if(!this.contains(_outSkin)) addChildAt(_outSkin, 0);
+						addChildAt(_outSkin, 0);
 						_outSkin.visible = true;
 					}
+					addListener();
 					break;
 				
 			}
@@ -303,12 +351,6 @@ package com.iabel.controls
 		override protected function dealloc(event:Event):void
 		{
 			super.dealloc(event);
-			
-			if(_outSkin && (_outSkin is Bitmap)) (_outSkin as Bitmap).bitmapData.dispose();
-			if(_overSkin && (_overSkin is Bitmap)) (_overSkin as Bitmap).bitmapData.dispose();
-			if(_downSkin && (_downSkin is Bitmap)) (_downSkin as Bitmap).bitmapData.dispose();
-			if(_disabledSkin && (_disabledSkin is Bitmap)) (_disabledSkin as Bitmap).bitmapData.dispose();
-			if(_selectedSkin && (_selectedSkin is Bitmap)) (_selectedSkin as Bitmap).bitmapData.dispose();
 			_outSkin = null;
 			_overSkin = null;
 			_downSkin = null;
