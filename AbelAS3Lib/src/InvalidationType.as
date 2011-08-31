@@ -1,5 +1,5 @@
 // Copyright 2007. Adobe Systems Incorporated. All Rights Reserved.
-package fl.core {
+package{
 	
 	/**
 	 * The InvalidationType class defines <code>InvalidationType</code> constants 

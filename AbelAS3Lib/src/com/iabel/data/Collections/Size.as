@@ -4,8 +4,10 @@ package com.iabel.data.Collections
 	{
 		private var _width:Number;
 		private var _height:Number;
-		public function Size()
+		public function Size(w:int, h:int)
 		{
+			_width = w;
+			_height = h;
 		}
 		/**
 		 * 宽度

@@ -958,7 +958,7 @@ package com.greensock {
 							onCompleteProxy.apply(null, onCompleteParamsProxy);
 						}
 						onCompleteAll.apply(null, onCompleteAllParams);
-					}
+					};
 				}
 				a[a.length] = new TweenMax(targets[i], duration, varsDup);
 				curDelay += stagger;
@@ -1323,7 +1323,7 @@ package com.greensock {
 				TweenLite.to({}, 0, {}); //forces initialization in case globalTimeScale is set before any tweens are created.
 			}
 			var tl:SimpleTimeline = TweenLite.rootTimeline;
-			var curTime:Number = (getTimer() * 0.001)
+			var curTime:Number = (getTimer() * 0.001);
 			tl.cachedStartTime = curTime - ((curTime - tl.cachedStartTime) * tl.cachedTimeScale / n);
 			tl = TweenLite.rootFramesTimeline;
 			curTime = TweenLite.rootFrame;

@@ -92,7 +92,7 @@ package com.iabel.data.Collections
 			dealloc();
 		}
 		
-		override protected function dealloc():void
+		override public function dealloc():void
 		{
 			super.dealloc();
 			_data = null;

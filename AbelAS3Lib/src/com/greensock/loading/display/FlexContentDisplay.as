@@ -5,15 +5,13 @@
  * UPDATES AND DOCS AT: http://www.greensock.com/loadermax/
  **/
 package com.greensock.loading.display {
+	import fl.core.UIComponent;
+
 	import com.greensock.loading.core.LoaderItem;
-	
+
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-	import flash.media.Video;
-	
-	import mx.core.UIComponent;
 	
 /**
  * A container for visual content that is loaded by any of the following: ImageLoaders, SWFLoaders, 

@@ -266,7 +266,7 @@ package com.greensock {
 //---- REGISTRATION (OUTER) ----------------------------------------------------------------------
 		
 		public function get registration():Point {
-			return _registration
+			return _registration;
 		}
 		public function set registration(p:Point):void {
 			_registration = p;
@@ -344,7 +344,7 @@ package com.greensock {
 			return (Math.atan2(-m.c, m.d) - _angle) * _RAD2DEG;
 		}
 		public function set skewX(n:Number):void {
-			var radians:Number = n * _DEG2RAD
+			var radians:Number = n * _DEG2RAD;
 			var m:Matrix = _target.transform.matrix;
 			var sy:Number = (_scaleY < 0) ? -_scaleY : _scaleY;
 			m.c = -sy * Math.sin(radians + _angle);
@@ -384,7 +384,7 @@ package com.greensock {
 			return this.skewX2Radians * _RAD2DEG;
 		}
 		public function set skewX2(n:Number):void {
-			this.skewX2Radians = n * _DEG2RAD
+			this.skewX2Radians = n * _DEG2RAD;
 		}
 		public function get skewY2():Number {
 			return this.skewY2Radians * _RAD2DEG;

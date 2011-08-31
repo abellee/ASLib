@@ -1,6 +1,5 @@
 package com.iabel.core
 {
-	import com.iabel.event.ALEvent;
 	import com.iabel.system.CoreSystem;
 	import com.iabel.utils.ScaleBitmap;
 	

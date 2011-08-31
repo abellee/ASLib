@@ -83,7 +83,7 @@ package com.iabel.Iterator
 			dealloc();
 		}
 		
-		override protected function dealloc():void
+		override public function dealloc():void
 		{
 			super.dealloc();
 			_data = null;

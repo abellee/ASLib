@@ -13,6 +13,11 @@ package com.iabel.data.Collections
 			_paddingRight = pr;
 			_paddingBottom = pb;
 		}
+		
+		public function equals(p:Padding):Boolean
+		{
+			return true;
+		}
 
 		public function get paddingBottom():Number
 		{

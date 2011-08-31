@@ -9,6 +9,11 @@ package com.iabel.data.Collections
 		public function RectRoundRaduis()
 		{
 		}
+		
+		public function equals(r:RectRoundRaduis):Boolean
+		{
+			return true;
+		}
 
 		public function get bottomRightRadius():Number
 		{
@@ -48,6 +53,11 @@ package com.iabel.data.Collections
 		public function set topLeftRadius(value:Number):void
 		{
 			_topLeftRadius = value;
+		}
+		
+		public function dealloc():void
+		{
+			
 		}
 
 	}

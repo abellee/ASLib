@@ -345,7 +345,7 @@ package com.greensock {
 //---- REGISTRATION (OUTER) ----------------------------------------------------------------------
 		
 		public function get registration():Vector3D {
-			return _registration
+			return _registration;
 		}
 		public function set registration($v:Vector3D):void {
 			_registration = $v;
