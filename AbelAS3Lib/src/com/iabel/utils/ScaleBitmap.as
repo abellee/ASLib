@@ -39,7 +39,7 @@ package com.iabel.utils {
 			
 			// super constructor
 			super(bmpData, pixelSnapping, smoothing);
-		
+			
 			// original bitmap
 			_originalBitmap = bmpData.clone();
 		}
@@ -54,6 +54,7 @@ package com.iabel.utils {
 		 * setter bitmapData
 		 */
 		override public function set bitmapData(bmpData : BitmapData) : void {
+			if(!bmpData) return;
 			_originalBitmap = bmpData.clone();
 			if (_scale9Grid != null) {
 				if (!validGrid(_scale9Grid)) {
