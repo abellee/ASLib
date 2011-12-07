@@ -1,16 +1,19 @@
 package {
-	import fl.controls.DataGrid;
-	import fl.controls.CheckBox;
 	import fl.controls.Button;
-	import com.kge.containers.Group;
-	import com.kge.containers.LayoutForm;
+	import fl.controls.CheckBox;
+	import fl.controls.RadioButton;
+
 	import com.kge.controls.Alert;
 	import com.kge.controls.AlertOption;
+	import com.kge.core.UIView;
+	import com.kge.core.UIViewController;
+	import com.kge.delegates.IUIView;
+
 	import flash.display.Sprite;
 	import flash.events.Event;
 
 	
-	public class UILib extends Sprite
+	public class UILib extends Sprite implements IUIView
 	{
 		/**
 		* 所有可视图形的基类
@@ -33,9 +36,17 @@ package {
 			checkbox.setStyle("downSkin", getSprite());
 			addChild(checkbox);
 			checkbox.x = 200;
-			var dg:DataGrid = new DataGrid();
-			dg.setStyle("skin", getSprite());
-			addChild(dg);
+			var rb:RadioButton = new RadioButton();
+			rb.setStyle("icon", getSprite());
+			addChild(rb);
+			
+			var viewController:UIViewController = new UIViewController();
+			viewController.view.delegate = this;
+		}
+		
+		public function changingFinished(view:UIView):void
+		{
+			
 		}
 		
 		private function getSprite():Sprite

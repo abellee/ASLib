@@ -1,4 +1,5 @@
 package com.kge.core {
+	import flash.display.Bitmap;
 	import com.kge.delegates.IUIView;
 
 	import flash.display.DisplayObject;
@@ -17,11 +18,12 @@ package com.kge.core {
 		 */
 		private var _listenerList : Object = {};
 		/**
+		 * @private
 		 * 确定当前容器中的内容是否已被改变
 		 */
 		protected var _changed : Boolean = false;
 		/**
-		 * 代理
+		 * 委托
 		 * @see com.kge.delegates.IUIView
 		 */
 		public var delegate : IUIView = null;
@@ -33,6 +35,9 @@ package com.kge.core {
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 
+		/**
+		 * @private
+		 */
 		protected function onAddedToStage(event : Event) : void {
 			trace("********| " + this + " |******** received ADDED_TO_STAGE message!");
 			stage.addEventListener(Event.RENDER, onRender);
@@ -42,24 +47,53 @@ package com.kge.core {
 		/**
 		 * 覆写addChild方法
 		 * 当添加子对象时，设置该容器已被改变
+		 * @return 返回添加的视图
 		 */
 		override public function addChild(child : DisplayObject) : DisplayObject {
 			super.addChild(child);
 			hasChanged();
 			return child;
 		}
+		
+		/**
+		 * 覆写addChildAt方法
+		 * 当添加子对象时，设置该容器已被改变
+		 * @return 返回添加的视图
+		 */
+		 override public function addChildAt(child:DisplayObject, index:int):DisplayObject
+		 {
+			var displayObject:DisplayObject = super.addChildAt(child, index);
+			hasChanged();
+			return displayObject;
+		 }
 
 		/**
 		 * 覆写removeChild方法
 		 * 当移除子对象时，设置该容器已被改变
+		 * @return 返回添加的视图
 		 */
 		override public function removeChild(child : DisplayObject) : DisplayObject {
 			super.removeChild(child);
+			if(child is Bitmap) (child as Bitmap).bitmapData.dispose();
 			hasChanged();
 			return child;
 		}
+		
+		/**
+		 * 覆写removeChildAt()
+		 * 当移除子对象时，设置该容器已被改变
+		 * @return 返回添加的视图
+		 */
+		 override public function removeChildAt(index:int):DisplayObject
+		 {
+			var child:DisplayObject = this.getChildAt(index);
+			if(child is Bitmap) (child as Bitmap).bitmapData.dispose();
+			hasChanged();
+			return super.removeChildAt(index);
+		 }
 
 		/**
+		 * @private
 		 * 接收到RENDER事件
 		 */
 		protected function onRender(event : Event) : void {
@@ -71,14 +105,16 @@ package com.kge.core {
 		}
 
 		/**
+		 * @private
 		 * 视图发生变化，进行相关处理。
 		 */
 		protected function doChange() : void {
 			// override in child class
-			if (delegate) delegate.changingFinished();
+			if (delegate) delegate.changingFinished(this);
 		}
 
 		/**
+		 * @private
 		 * 设置当前容器已被改变
 		 */
 		protected function hasChanged() : void {
@@ -122,17 +158,26 @@ package com.kge.core {
 		 * 用于重新构建对象之用
 		 * 请在此处清空或重置重构该对象的相关数据
 		 * 如果想完全重建对象，请调用dealloc()方法，然后再new UIView();重新创建
-		 * @see dealloc();
+		 * @see #dealloc();
 		 */
 		public function rebuild() : void {
 			// reset variables in here
 		}
 
 		/**
+		 * 移除所有子视图
+		 */
+		public function removeAllChildren() : void {
+			while(this.numChildren){
+				this.removeChildAt(0);
+			}
+		}
+
+		/**
 		 * 垃圾回收
 		 * 一旦调用该方法，将销毁一切资源等待虚拟机的垃圾回收。
 		 * 如果只是想重新构造对象，请调用rebuild()方法。
-		 * @see rebuild()
+		 * @see #rebuild()
 		 */
 		public function dealloc() : void {
 			for (var eventType:String in _listenerList) {

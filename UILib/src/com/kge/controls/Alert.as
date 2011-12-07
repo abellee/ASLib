@@ -1,11 +1,10 @@
 package com.kge.controls {
-	import flash.display.Shape;
-
 	import fl.controls.Button;
 
 	import com.kge.core.UIView;
 	import com.kge.delegates.IAlert;
 
+	import flash.display.Shape;
 	import flash.errors.IllegalOperationError;
 
 	/**
@@ -73,11 +72,15 @@ package com.kge.controls {
 
 		/**
 		 * 取得一个Alert实例。
+		 * @return 返回一个Alert的实例
 		 */
 		public static function get instance() : Alert {
 			return _instance;
 		}
 
+		/**
+		 * @private
+		 */
 		override protected function doChange() : void {
 			init();
 			super.doChange();
@@ -91,10 +94,16 @@ package com.kge.controls {
 			trace("init");
 		}
 
+		/**
+		 * @private
+		 */
 		override public function rebuild() : void {
 			super.rebuild();
 		}
 
+		/**
+		 * @private
+		 */
 		override public function dealloc() : void {
 			super.dealloc();
 		}
