@@ -97,7 +97,7 @@ package com.kge.core {
 		 * 接收到RENDER事件
 		 */
 		protected function onRender(event : Event) : void {
-			trace("on render:" + _changed);
+			//trace("on render:" + _changed);
 			if (_changed) {
 				doChange();
 				_changed = false;

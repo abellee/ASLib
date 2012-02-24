@@ -9,6 +9,6 @@ package com.kge.delegates {
 		 * 刷新视图完成
 		 * @param view 完成重绘的视图
 		 */
-		function changingFinished(view:UIView) : void;
+		function changingFinished(displayObjectContainer:UIView) : void;
 	}
 }
